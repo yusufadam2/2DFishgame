@@ -1,4 +1,6 @@
 import os
+import datetime
+
 from difflib import SequenceMatcher
 def inputValidator(question, lim= None):
 	try:
@@ -21,8 +23,12 @@ Dict_list= []
 for line in englishDict_file:
 	Dict_list.append(line.strip("\n"))
 englishDict_file.close()
-# englishDict_file.readlines().strip("\n")
-# print(Dict_list)
+
+wordCount= 0
+wordWrong= 0
+wordRight= 0
+wordAdded= 0
+wordsChanged= 0
 
 while (valid== False):
 	menu = inputValidator("1- Spell check a sentence, 2- Spell check a file, 0- Quit program: \n", lim=[0,2])
@@ -33,12 +39,14 @@ while (valid== False):
 		wordPass= True
 		print(words)
 		wordi=0
+		valid= True
 		for i in words:
 			print(words[wordi])
 			if (i in Dict_list):
 				wordPass = True
 			else:
 				wordPass = False
+				wordWrong= wordWrong+1
 
 				incorrectMenu= inputValidator(words[wordi] + " spelt incorrectly, would you like to 1- Ignore, 2- Mark, 3- Add to dictionary, 4- Suggest correction\n", lim=[1,4])
 				if (incorrectMenu==1):
@@ -65,9 +73,16 @@ while (valid== False):
 							suggWord= word
 					print(suggWord)
 					chooseWord= inputValidator("Would you like to accept the suggestion (1) or reject the suggestion (2) \n", lim=[1,2])
+					if (chooseWord==1):
+						words[wordi]= suggWord
+						print("Word has been replaced by suggested word")
+
+					if (chooseWord==2):
+						print("Word marked as incorrect")
 
 			print (wordPass)
 			wordi=wordi+1
+			wordCount=wordCount+1
 
 	elif(menu==2):
 		while (valid1==False):
@@ -84,7 +99,8 @@ while (valid== False):
 			except:
 				choice=inputValidator("Invalid filename, would you like to try again (1) or return to the menu (2)\n", lim=[1,2])
 				if (choice==2):
-					break
+					print("")
+					valid=False
 
 	elif(menu==0):
 		break
