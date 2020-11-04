@@ -1,6 +1,8 @@
 import os
 import datetime
 import re
+import sys
+
 from difflib import SequenceMatcher
 def inputValidator(question, lim= None):
 	try:
@@ -42,7 +44,11 @@ while (valid== False):
 		for i in range(len(words)):
 			words[i]= re.sub(r'[^a-zA-Z]+', '', words[i])
 
-		originalWords= words
+		originalWords= []
+		for word in words:
+			originalWords.append(word)
+
+		print(originalWords)
 		wordPass= True
 		print(words)
 		wordi=0
@@ -65,6 +71,7 @@ while (valid== False):
 					print("word marked incorrectly")
 					wordWrong= wordWrong+1
 					print(words[wordi])
+					print(originalWords)
 
 				elif (incorrectMenu==3):
 					Dict_list.append(words[wordi])
@@ -104,10 +111,16 @@ while (valid== False):
 		print(checkedTime)
 		elapsedTime= checkedTime-startTime
 		print(elapsedTime)
-		file= open(input("please enter a file name: "), "w")
+		file= open(input("please enter a file name: "), "a")
 		file.write("Total words: " + str(wordCount) + " Correct words: " + str(wordRight) + " Incorrect words: " + str(wordWrong) + " Words added to dictionary: " + str(wordAdded) + " Words changed: " + str(wordsChanged)+ " Time spellchecked: " + str(checkedTime) + " elapsed time: " + str(elapsedTime) + "\n" + "Original words: ")
 		for word in originalWords:
 			file.write(word + " ")
+
+		file.write("\nAmended words: ")
+		for word in words:
+			file.write(word + " ")
+		print(words)
+		file.close()
 
 		restart=inputValidator("Would you like to spellcheck a new file? Yes(1) or No (2)\n", lim=[1,2])
 		if (restart==1):
@@ -139,7 +152,10 @@ while (valid== False):
 					words[i]= re.sub(r'[^a-zA-Z]+', '', words[i])
 					print(words[i])
 
-				originalWords= words
+				originalWords= []
+				for word in words:
+					originalWords.append(word)
+
 				wordPass= True
 				print(words)
 				wordi=0
@@ -202,6 +218,12 @@ while (valid== False):
 				file.write("Total words: " + str(wordCount) + " Correct words: " + str(wordRight) + " Incorrect words: " + str(wordWrong) + " Words added to dictionary: " + str(wordAdded) + " Words changed: " + str(wordsChanged)+ " Time spellchecked: " + str(checkedTime) + " elapsed time: " + str(elapsedTime) + "\n" + "Original words: ")
 				for word in originalWords:
 					file.write(word + " ")
+
+				file.write("\nAmended words: ")
+				for word in words:
+					file.write(word + " ")
+				print(words)
+				file.close()
 
 				restart=inputValidator("Would you like to spellcheck a new file? Yes(1) or No (2)\n", lim=[1,2])
 				if (restart==1):
