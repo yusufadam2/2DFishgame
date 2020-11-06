@@ -115,7 +115,7 @@ while (valid== False):
 						if(score1> score):
 							score= score1
 							suggWord= word
-					print("        Suggested word: " + suggWord)
+					print("Suggested word: " + suggWord)
 					# Input validator, asks user is they want to accept suggestion
 					chooseWord= inputValidator("Would you like to accept the suggestion (1) or reject the suggestion (2) \n", lim=[1,2])
 					if (chooseWord==1):
@@ -184,7 +184,7 @@ while (valid== False):
 						wordRight=wordRight+1
 					else:
 						wordPass = False
-						print("\n\u251C" + "\u2550"*40 + "\u2524")
+
 						incorrectMenu= inputValidator(words[wordi] + " spelt incorrectly, would you like to 1- Ignore, 2- Mark, 3- Add to dictionary, 4- Suggest correction\n", lim=[1,4])
 						# Incorrect menu output
 						if (incorrectMenu==1):
@@ -259,7 +259,7 @@ while (valid== False):
 			except:
 				# Invalid file name input, loops
 				valid1= False
-				choice=inputValidator("Invalid filename, would you like to try again (1) or return to the menu (2)\n", lim=[1,2])
+				choice=inputValidator("        Invalid filename, would you like to try again (1) or return to the menu (2)\n", lim=[1,2])
 				if (choice==2):
 					print("")
 					break
