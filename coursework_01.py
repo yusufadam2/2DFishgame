@@ -42,7 +42,14 @@ checkedTime=datetime.datetime.now()
 # First menu loop
 while (valid== False):
 	# Validates inputs for the menu
-	menu = inputValidator("1- Spell check a sentence, 2- Spell check a file, 0- Quit program: \n", lim=[0,2])
+	print("\n\u251C" + "\u2550"*40 + "\u2524")
+	menu = inputValidator(
+	"""
+	Would you like to:
+	1- Spell check a sentence
+	2- Spell check a file
+	0- Quit program:
+	{} \n""".format("\n\u251C" + "\u2550"*40 + "\u2524"), lim=[0,2])
 
 	if(menu==1):
 		# Collects user input for sentence
@@ -72,7 +79,12 @@ while (valid== False):
 				wordWrong= wordWrong+1
 
 				# Incorrect menu output
-				incorrectMenu= inputValidator(words[wordi] + " spelt incorrectly, would you like to 1- Ignore, 2- Mark, 3- Add to dictionary, 4- Suggest correction\n", lim=[1,4])
+				incorrectMenu= inputValidator(words[wordi] + """
+				 spelt incorrectly, would you like to:
+				 1- Ignore
+				 2- Mark
+				 3- Add to dictionary
+				 4- Suggest correction\n""", lim=[1,4])
 				if (incorrectMenu==1):
 					# increment wrong word count
 					wordWrong= wordWrong+1
@@ -103,7 +115,7 @@ while (valid== False):
 						if(score1> score):
 							score= score1
 							suggWord= word
-					print("Suggested word: " + suggWord)
+					print("        Suggested word: " + suggWord)
 					# Input validator, asks user is they want to accept suggestion
 					chooseWord= inputValidator("Would you like to accept the suggestion (1) or reject the suggestion (2) \n", lim=[1,2])
 					if (chooseWord==1):
@@ -172,7 +184,7 @@ while (valid== False):
 						wordRight=wordRight+1
 					else:
 						wordPass = False
-
+						print("\n\u251C" + "\u2550"*40 + "\u2524")
 						incorrectMenu= inputValidator(words[wordi] + " spelt incorrectly, would you like to 1- Ignore, 2- Mark, 3- Add to dictionary, 4- Suggest correction\n", lim=[1,4])
 						# Incorrect menu output
 						if (incorrectMenu==1):
