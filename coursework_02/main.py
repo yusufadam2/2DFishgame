@@ -1,44 +1,69 @@
 from tkinter import *
 import random
+import game 
 
-def setWindowDimensions(w,h):
-	window= Tk() #create window
-	window.title("Prince of The Pacific")
-	#Calcs computers screen size
-	ws= window.winfo_screenwidth()
-	hs= window.winfo_screenheight()
-	x= (ws/2) - (w/2) # calculate middle
-	y= (hs/2) - (hs/2)
-	window.geometry('%dx%d+%d+%d' % (w, h, x, y)) #window size
-	
-	return window
+width= 1600
+height= 900
+global mainWindow
+mainWindow= Tk() #create window
+mainWindow.title("Prince of The Pacific")
+#Calcs computers screen size
+ws= mainWindow.winfo_screenwidth()
+hs= mainWindow.winfo_screenheight()
+x= (ws/2) - (width/2) # calculate middle
+y= (hs/2) - (hs/2)
+mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
+
+canvasMenu= Canvas(mainWindow, width=1600, height=900)
 
 def createMenu():
-	width= 1600
-	height= 900
-	menuWindow= setWindowDimensions(width, height)
+	
+	canvasMenu.config(bg="#9CEFFE")
+	canvasMenu.pack(expand= YES, fill= BOTH)
+	imgbackground= PhotoImage(file= "background.png")
+	canvasMenu.create_image(800,450, image= imgbackground)
+	canvasMenu.pack()
 
-	imgbackground=PhotoImage(file= "background.png")
+	Titletext= canvasMenu.create_text(width/2 , 30 , fill="black" , font=("Times 20 italic bold", 50) , text="Menu")
 
-	canvas= Canvas(menuWindow, width=1600, height=900)
-	canvas.pack(expand= YES, fill= BOTH)
-	canvas.create_image(800,450, image= imgbackground)
-	canvas.config(bg="#9CEFFE")
-
-	Titletext= canvas.create_text(width/2 , 30 , fill="black" , font=("Times 20 italic bold", 50) , text="Menu")
-
-	btnStart= Button(menuWindow, text= "Start", bg="white", height=3, width=70)
+	btnStart= Button(mainWindow, text= "Start", bg="white", height=3, width=70, command= createGame)
 	btnStart.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-	btnInst= Button(menuWindow, text= "Instructions", bg="white", height=3, width=70)
-	btnInst.place(relx=0.5, rely=0.558, anchor=CENTER)
+	btnInst= Button(mainWindow, text= "Instructions", bg="white", height=3, width=70)
+	btnInst.place(relx=0.5, rely=0.559, anchor=CENTER)
 
-	btnLdrb= Button(menuWindow, text= "Leaderboard", bg="white", height=3, width=70)
-	btnLdrb.place(relx=0.5, rely=0.616, anchor=CENTER)
+	btnLdrb= Button(mainWindow, text= "Leaderboard", bg="white", height=3, width=70)
+	btnLdrb.place(relx=0.5, rely=0.617, anchor=CENTER)
 
-	btnSet= Button(menuWindow, text= "Settings", bg="white", height=3, width=70)
-	btnSet.place(relx=0.5, rely=0.673, anchor=CENTER)
+	btnSet= Button(mainWindow, text= "Settings", bg="white", height=3, width=70)
+	btnSet.place(relx=0.5, rely=0.674, anchor=CENTER)
 
-	menuWindow.mainloop()
+	mainWindow.mainloop()
+
+def createGame():
+	print("hello")
+	width= 1600
+	height= 900
+	canvasMenu.destroy()
+
+	canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
+	canvasGame.pack(expand= YES, fill= BOTH)
+	gamebg= PhotoImage(file= "game.png")
+	canvasGame.create_image(800,450, image= gamebg)
+	canvasGame.config(bg="#9CEFFE")
+
+
+
+
+	mainWindow.mainloop()
 
 createMenu()
+
+
+
+
+
+
+
+
+
