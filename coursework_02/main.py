@@ -41,24 +41,29 @@ def createMenu():
 
 def createGame():
 
-
-
-
 	def leftKey(event):
 		direction= "left"
-		canvasGame.move(fish, -20, 0)
+		fishPos= canvasGame.coords(fish)
+		if fishPos[0]>100:
+			canvasGame.move(fish, -20, 0)
 
 	def rightKey(event):
 		direction= "right"
-		canvasGame.move(fish, 20, 0)
+		fishPos= canvasGame.coords(fish)
+		if fishPos[0]<1500:
+			canvasGame.move(fish, 20, 0)
 
 	def upKey(event):
 		direction= "up"
-		canvasGame.move(fish, 0, -20)
+		fishPos= canvasGame.coords(fish)
+		if fishPos[1]>50:
+			canvasGame.move(fish, 0, -20)
 
 	def downKey(event):
 		direction= "down"
-		canvasGame.move(fish, 0, 20)
+		fishPos= canvasGame.coords(fish)
+		if fishPos[1]<850:
+			canvasGame.move(fish, 0, 20)
 
 	print("hello")
 	width= 1600
@@ -71,7 +76,7 @@ def createGame():
 	canvasGame.create_image(800,450, image= gamebg)
 
 	sidat= PhotoImage(file="fish.png")
-	fish=canvasGame.create_image(800,450, image=sidat)
+	fish=canvasGame.create_image(90,450, image=sidat)
 	canvasGame.config(bg="#9CEFFE")
 
 	canvasGame.bind("<Left>", leftKey)
