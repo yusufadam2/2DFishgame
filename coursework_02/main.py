@@ -1,6 +1,5 @@
 from tkinter import *
 import random
-import game 
 
 width= 1600
 height= 900
@@ -41,6 +40,26 @@ def createMenu():
 	mainWindow.mainloop()
 
 def createGame():
+
+
+
+
+	def leftKey(event):
+		direction= "left"
+		canvasGame.move(fish, -20, 0)
+
+	def rightKey(event):
+		direction= "right"
+		canvasGame.move(fish, 20, 0)
+
+	def upKey(event):
+		direction= "up"
+		canvasGame.move(fish, 0, -20)
+
+	def downKey(event):
+		direction= "down"
+		canvasGame.move(fish, 0, 20)
+
 	print("hello")
 	width= 1600
 	height= 900
@@ -50,10 +69,18 @@ def createGame():
 	canvasGame.pack(expand= YES, fill= BOTH)
 	gamebg= PhotoImage(file= "game.png")
 	canvasGame.create_image(800,450, image= gamebg)
+
+	sidat= PhotoImage(file="fish.png")
+	fish=canvasGame.create_image(800,450, image=sidat)
 	canvasGame.config(bg="#9CEFFE")
 
+	canvasGame.bind("<Left>", leftKey)
+	canvasGame.bind("<Right>", rightKey)
+	canvasGame.bind("<Up>", upKey)
+	canvasGame.bind("<Down>", downKey)
+	canvasGame.focus_set()
 
-
+	
 
 	mainWindow.mainloop()
 
