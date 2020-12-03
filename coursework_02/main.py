@@ -81,7 +81,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 	fish=canvasGame.create_image(90,450, image= sidat)
 	canvasGame.config(bg="#9CEFFE")
 
-	#binds the control keys to the necessary functions for movement
+	#binds the control keys to the necessary functions for movements
 	canvasGame.bind("<Left>", leftKey)
 	canvasGame.bind("<Right>", rightKey)
 	canvasGame.bind("<Up>", upKey)
