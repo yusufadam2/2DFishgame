@@ -1,5 +1,6 @@
 from tkinter import *
 import random
+import time
 
 width= 1600
 height= 900
@@ -16,6 +17,8 @@ mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
 # Creation of canvases
 canvasMenu= Canvas(mainWindow, width=1600, height=900)
 canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
+
+
 
 def leftKey(event): #Function used to move the fish character left
 	direction= "left"
@@ -81,26 +84,65 @@ def createGame(): #Function used to add the attributes for the game canvas
 	fish=canvasGame.create_image(90,450, image= sidat)
 	canvasGame.config(bg="#9CEFFE")
 
-	#binds the control keys to the necessary functions for movements
+	#binds the control keys to the necessary functions for movement
 	canvasGame.bind("<Left>", leftKey)
 	canvasGame.bind("<Right>", rightKey)
 	canvasGame.bind("<Up>", upKey)
 	canvasGame.bind("<Down>", downKey)
 	canvasGame.focus_set()
 
+	# Creation of necessary variables used throughout the program
+	global enemyList
 	enemyList= []
+	global enemyPic
 	enemyPic= []
+	global colour
 	colour= ["Red", "Green", "Orange", "Pink", "Purple"]
 
-	for i in range (10):
-		f_col= random.randint(0, 4)
-		y= random.randint(0,900)
-		enemyPic.append(PhotoImage(file= colour[f_col] + ".png"))
+	while True:
 
-		enemyList.append(canvasGame.create_image(800, y, image= enemyPic[i]))
-		print("works")
+		
+		delayFish()
+
+		# 	enemyPos=[]
+		# 	f_col= random.randint(0, 4)
+		# 	y= random.randint(0,900)
+		# 	enemyPic.append(PhotoImage(file= colour[f_col] + ".png"))
+		# 	enemyList.append(canvasGame.create_image(800, y, image= enemyPic[i]))
+		# 	canvasGame.update()
+		# 	# canvasGame.after(1000, canvasGame)
+	
+		# 	enemyPos= canvasGame.coords(enemyList[i])
+		# 	print(enemyPos)
+
+		# for j in range (10):
+		# 	canvasGame.move(enemyPic[j], -20, 0)
+
+		break
+
 
 	mainWindow.mainloop()
+
+def createEnemy():
+		for i in range (3):
+			f_col= random.randint(0, 4)
+			# print(f_col)
+			y= random.randint(0,900)
+			fishPic= colour[f_col] + ".png"
+			print(colour[f_col])
+			print(fishPic)
+			enemyPicture= PhotoImage(file= fishPic)
+			enemyPic.append(enemyPicture)
+
+			enemy=(canvasGame.create_image(800, y, image= enemyPicture))
+			enemyList.append(enemy)
+			canvasGame.update()
+		
+
+def delayFish():
+	createEnemy()
+	mainWindow.after(3000, delayFish)
+
 
 createMenu()
 
