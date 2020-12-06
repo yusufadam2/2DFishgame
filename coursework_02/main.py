@@ -94,60 +94,53 @@ def createGame(): #Function used to add the attributes for the game canvas
 	# Creation of necessary variables used throughout the program
 	global enemyList
 	enemyList= []
-	global enemyPic
+	global enemyPic, fishes
 	enemyPic= []
+	fishes = []
 	global colour
-	colour= ["Red", "Green", "Orange", "Pink", "Purple"]
-
+	colour= ["Red", "Red", "Green", "Orange", "Pink", "Purple"]
+	global enemyColour
+	enemyColour= []
 	while True:
 
-		
 		delayFish()
 
-		# 	enemyPos=[]
-		# 	f_col= random.randint(0, 4)
-		# 	y= random.randint(0,900)
-		# 	enemyPic.append(PhotoImage(file= colour[f_col] + ".png"))
-		# 	enemyList.append(canvasGame.create_image(800, y, image= enemyPic[i]))
-		# 	canvasGame.update()
-		# 	# canvasGame.after(1000, canvasGame)
-	
-		# 	enemyPos= canvasGame.coords(enemyList[i])
-		# 	print(enemyPos)
-
-		# for j in range (10):
-		# 	canvasGame.move(enemyPic[j], -20, 0)
-
+		# print(enemyPic)
 		break
 
 
 	mainWindow.mainloop()
 
 def createEnemy():
-		for i in range (3):
-			f_col= random.randint(0, 4)
-			# print(f_col)
-			y= random.randint(0,900)
-			fishPic= colour[f_col] + ".png"
-			print(colour[f_col])
-			print(fishPic)
-			enemyPicture= PhotoImage(file= fishPic)
-			enemyPic.append(enemyPicture)
-
-			enemy=(canvasGame.create_image(800, y, image= enemyPicture))
-			enemyList.append(enemy)
-			canvasGame.update()
+	for i in range (3):
+		# random colour
+		f_col= random.randint(0, 5)
+		# random height
+		y= random.randint(0,900)
+		# creation of fish pic
+		fishPic= colour[f_col] + ".png"
+		enemyPicture= PhotoImage(file= fishPic)
+		fishes.append(enemyPicture)
+		enemyPic.append(fishPic)
+		#print (enemyPic)
+		# place fish on canvas
+		enemy=(canvasGame.create_image(800, y, image= enemyPicture))
+		enemyList.append(enemy)
+		print(enemyList)
+		canvasGame.update()
 		
 
 def delayFish():
 	createEnemy()
+	for enemy in enemyList:
+		pos= canvasGame.coords(enemy)
+		print(pos)
+
 	mainWindow.after(3000, delayFish)
 
 
+
 createMenu()
-
-
-
 
 
 
