@@ -112,7 +112,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 	mainWindow.mainloop()
 
 def createEnemy():
-	for i in range (3):
+	for i in range (1):
 		# random colour
 		f_col= random.randint(0, 5)
 		# random height
@@ -130,18 +130,19 @@ def createEnemy():
 		
 
 def delayFish():
-	createEnemy()
-	print (enemyList)
+	while True:
+		createEnemy()
+		moveFish()
+		# cause delay
+		# mainWindow.after(3000, createEnemy)
+
+def moveFish():
 	for enemy in enemyList:
 		pos= canvasGame.coords(enemy)
-		print(pos)
-		if pos[0]>0:
-			canvasGame.move(enemy, -100, 0)
-			print(pos)
-
-	mainWindow.after(3000, delayFish)
-
-
+		# print(pos)
+		if pos[0]>-100:
+			canvasGame.move(enemy, -10, 0)
+			# print(pos)
 
 createMenu()
 
