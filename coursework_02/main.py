@@ -122,19 +122,22 @@ def createEnemy():
 		enemyPicture= PhotoImage(file= fishPic)
 		fishes.append(enemyPicture)
 		enemyPic.append(fishPic)
-		#print (enemyPic)
 		# place fish on canvas
 		enemy=(canvasGame.create_image(800, y, image= enemyPicture))
 		enemyList.append(enemy)
-		print(enemyList)
+		# update game canvas 
 		canvasGame.update()
 		
 
 def delayFish():
 	createEnemy()
+	print (enemyList)
 	for enemy in enemyList:
 		pos= canvasGame.coords(enemy)
 		print(pos)
+		if pos[0]>0:
+			canvasGame.move(enemy, -100, 0)
+			print(pos)
 
 	mainWindow.after(3000, delayFish)
 
