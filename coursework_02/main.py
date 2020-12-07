@@ -94,9 +94,9 @@ def createGame(): #Function used to add the attributes for the game canvas
 	# Creation of necessary variables used throughout the program
 	global enemyList
 	enemyList= []
-	global enemyPic, fishes
+	global enemyPic, enemyFish
 	enemyPic= []
-	fishes = []
+	enemyFish = []
 	global colour
 	colour= ["Red", "Red", "Green", "Orange", "Pink", "Purple"]
 	global enemyColour
@@ -111,38 +111,61 @@ def createGame(): #Function used to add the attributes for the game canvas
 
 	mainWindow.mainloop()
 
+global fishx
+fishx=1700
 def createEnemy():
-	for i in range (1):
-		# random colour
-		f_col= random.randint(0, 5)
-		# random height
-		y= random.randint(0,900)
-		# creation of fish pic
-		fishPic= colour[f_col] + ".png"
-		enemyPicture= PhotoImage(file= fishPic)
-		fishes.append(enemyPicture)
-		enemyPic.append(fishPic)
-		# place fish on canvas
-		enemy=(canvasGame.create_image(800, y, image= enemyPicture))
-		enemyList.append(enemy)
-		# update game canvas 
-		canvasGame.update()
+	global fishx
+	# random colour
+	f_col= random.randint(0, 5)
+	# random height
+	y= random.randint(0,900)
+	# creation of fish pic
+	fishPic= colour[f_col] + ".png"
+	enemyPicture= PhotoImage(file= fishPic)
+	enemyFish.append(enemyPicture)
+	enemyPic.append(fishPic)
+	# place fish on canvas
+	fishx=fishx+20
+	enemy=(canvasGame.create_image(1700, y, image= enemyPicture))
+	enemyList.append(enemy)
+	
+	# update game canvas 
+	# print(enemyList)
+	canvasGame.update()
 		
 
 def delayFish():
 	while True:
 		createEnemy()
+
 		moveFish()
+		# test()
+		# moveFish()
 		# cause delay
-		# mainWindow.after(3000, createEnemy)
+		# mainWindow.after(1, delayFish)
 
 def moveFish():
 	for enemy in enemyList:
+
 		pos= canvasGame.coords(enemy)
-		# print(pos)
 		if pos[0]>-100:
 			canvasGame.move(enemy, -10, 0)
-			# print(pos)
+
+		else:
+			enemyList.remove(enemy)
+			canvasGame.delete(enemy)		
+
+		for fenemy in enemyList:
+			fpos= canvasGame.coords(fish)
+			if (pos[0]-47.5 <= fpos[0]+95):
+
+				if(pos[1]-32.5 >= fpos[1]-65) or (pos[1]+32.5 <= fpos[1]+32.5):
+					enemyList.remove(fenemy)
+					canvasGame.delete(fenemy)
+					print ("works")
+
+# def test():
+# 	canvasGame.after(4000, createEnemy())
 
 createMenu()
 
