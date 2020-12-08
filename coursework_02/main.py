@@ -126,7 +126,7 @@ def createEnemy():
 	enemyPic.append(fishPic)
 	# place fish on canvas
 	fishx=fishx+20
-	enemy=(canvasGame.create_image(1700, y, image= enemyPicture))
+	enemy=(canvasGame.create_image(fishx, y, image= enemyPicture))
 	enemyList.append(enemy)
 	
 	# update game canvas 
@@ -135,9 +135,9 @@ def createEnemy():
 		
 
 def delayFish():
+	
 	while True:
 		createEnemy()
-
 		moveFish()
 		# test()
 		# moveFish()
@@ -155,15 +155,19 @@ def moveFish():
 			enemyList.remove(enemy)
 			canvasGame.delete(enemy)		
 
-		for fenemy in enemyList:
-			fpos= canvasGame.coords(fish)
-			if (pos[0]-47.5 <= fpos[0]+95):
+		fpos= canvasGame.coords(fish)
+		if (pos[0]-47.5 <= fpos[0]+95) and (pos[0]+ 47.5 >= fpos[0]-95):
 
-				if(pos[1]-32.5 >= fpos[1]-65) or (pos[1]+32.5 <= fpos[1]+32.5):
-					enemyList.remove(fenemy)
-					canvasGame.delete(fenemy)
-					print ("works")
+			if(pos[1]-32.5 >= fpos[1]-65 and pos[1]+32.5<= fpos[1]+65):
+				enemyList.remove(enemy)
+				canvasGame.delete(enemy)
+				print ("works")
 
+		# if(pos[0]-47.5 <= fpos[0] +95):
+		# 	print("pass")
+		
+
+# or (pos[1]+32.5 <= fpos[1]+32.5)
 # def test():
 # 	canvasGame.after(4000, createEnemy())
 
