@@ -4,6 +4,7 @@ import time
 
 width= 1600
 height= 900
+# creation of main window
 global mainWindow
 mainWindow= Tk() #create window
 mainWindow.title("Prince of The Pacific")
@@ -13,12 +14,14 @@ hs= mainWindow.winfo_screenheight()
 x= (ws/2) - (width/2) # calculate middle
 y= (hs/2) - (hs/2)
 mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
+mainWindow.resizable(0,0)
+
 
 # Creation of canvases
 canvasMenu= Canvas(mainWindow, width=1600, height=900)
 canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
 
-# Global variables needed
+# necessary Global variables 
 global score
 score= 0
 
@@ -84,10 +87,14 @@ def createGame(): #Function used to add the attributes for the game canvas
 	scoreText= canvasGame.create_text(1500, 20, fill="black", font=("Comic Sans", 50), text="Score: " + str(score))
 
 	#create fish character image 
-	sidat= PhotoImage(file="fish.png")
+	sidat= PhotoImage(file= "fish.png")
 	global fish
-	fish=canvasGame.create_image(90,450, image= sidat)
+	fish= canvasGame.create_image(90,450, image= sidat)
 	canvasGame.config(bg="#9CEFFE")
+
+	btn_pause= PhotoImage(file= "pause.png")
+	pausebtn= Button(canvasGame, image= btn_pause, borderwidth=0, highlightthickness=0, command= pauseGame)
+	pausebtn.place(x=10, y=10)
 
 	#binds the control keys to the necessary functions for movement
 	canvasGame.bind("<Left>", leftKey)
@@ -109,9 +116,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 
 	while True:
 
-		delayFish()
-
-		# print(enemyPic)
+		startGame()
 		break
 
 
@@ -140,13 +145,25 @@ def createEnemy():
 	# update game canvas 
 	canvasGame.update()
 
-def delayFish():
+def startGame():
+	global paused
+	paused= False
 	while True:
 		createEnemy()
 		moveFish()
+		if paused == True:
+			#removes binds from the necessary keys
+			canvasGame.unbind("<Left>")
+			canvasGame.unbind("<Right>")
+			canvasGame.unbind("<Up>")
+			canvasGame.unbind("<Down>")
+			canvasGame.focus_set()
+			print("pause works")
+			break
 
 def moveFish():
 	global score
+	global paused 
 
 	for enemy in enemyList:
 
@@ -178,7 +195,19 @@ def moveFish():
 
 				else:
 					print(enemyColour[enemy-4])
-					# print(enemyColour[enemy])
+					paused= True
+
+
+
+def pauseGame():
+	global paused
+	paused= True
+	# creation of pause window
+	global pauseWindow
+	pauseWindow= Tk()
+	pauseWindow.title("Game Paused")
+	pauseWindow.geometry('%dx%d+%d+%d' %(400, 800, 700, 75))
+	pauseWindow.resizable(0,0)
 
 
 createMenu()
