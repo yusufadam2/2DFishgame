@@ -167,14 +167,14 @@ def moveFish():
 				# Remove from canvas if collision
 				enemyList.remove(enemy)
 				canvasGame.delete(enemy)
-				if enemyColour[enemy] == "0" or enemyColour[enemy] == "1" :
+				if enemyColour[enemy-3] == 0 or enemyColour[enemy-3] == 1 :
 					# print(enemyColour[enemy])
 					score+=1
-					print(score)
+					print("score is:" + str(score))
 
 				else:
-					print("dead")
-					print(enemyColour[enemy])
+					print(enemyColour[enemy-3])
+					# print(enemyColour[enemy])
 
 
 createMenu()
