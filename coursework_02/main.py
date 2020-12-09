@@ -56,7 +56,7 @@ def createMenu(): #sets the attributes for the menu canvas
 	canvasMenu.pack()
 
 	#text used to set the name
-	Titletext= canvasMenu.create_text(width/2 , 30 , fill="black" , font=("Times 20 italic bold", 50) , text="Menu")
+	titleText= canvasMenu.create_text(width/2 , 30 , fill="black" , font=("Times 20 italic bold", 50) , text="Menu")
 
 	#Necessary buttons places on the menu screen
 	btnStart= Button(canvasMenu, text= "Start", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), createGame()])
@@ -79,6 +79,9 @@ def createGame(): #Function used to add the attributes for the game canvas
 	#Create background image
 	gamebg= PhotoImage(file= "game.png")
 	canvasGame.create_image(800,450, image= gamebg)
+
+	global scoreText
+	scoreText= canvasGame.create_text(1500, 20, fill="black", font=("Comic Sans", 50), text="Score: " + str(score))
 
 	#create fish character image 
 	sidat= PhotoImage(file="fish.png")
@@ -121,7 +124,7 @@ def createEnemy():
 	# random colour
 	f_col= random.randint(0, 5)
 	# random height
-	y= random.randint(0,900)
+	y= random.randint(50,850)
 	# creation of fish pic
 	fishPic= colour[f_col] + ".png"
 	
@@ -129,7 +132,7 @@ def createEnemy():
 	enemyFish.append(enemyPicture)
 	enemyPic.append(fishPic)
 	# place fish on canvas
-	fishx=fishx+20
+	fishx=fishx+100
 	enemy=(canvasGame.create_image(fishx, y, image= enemyPicture))
 	enemyList.append(enemy)
 	enemyColour.append(f_col)	
@@ -167,13 +170,14 @@ def moveFish():
 				# Remove from canvas if collision
 				enemyList.remove(enemy)
 				canvasGame.delete(enemy)
-				if enemyColour[enemy-3] == 0 or enemyColour[enemy-3] == 1 :
+				if enemyColour[enemy-4] == 0 or enemyColour[enemy-4] == 1 :
 					# print(enemyColour[enemy])
 					score+=1
+					canvasGame.itemconfig(scoreText, text="Score: " + str(score))
 					print("score is:" + str(score))
 
 				else:
-					print(enemyColour[enemy-3])
+					print(enemyColour[enemy-4])
 					# print(enemyColour[enemy])
 
 
