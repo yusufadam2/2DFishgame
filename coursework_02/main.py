@@ -18,7 +18,9 @@ mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
 canvasMenu= Canvas(mainWindow, width=1600, height=900)
 canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
 
-
+# Global variables needed
+global score
+score= 0
 
 def leftKey(event): #Function used to move the fish character left
 	direction= "left"
@@ -53,7 +55,7 @@ def createMenu(): #sets the attributes for the menu canvas
 	canvasMenu.create_image(800,450, image= imgbackground)
 	canvasMenu.pack()
 
-	#tesxt used to set the name
+	#text used to set the name
 	Titletext= canvasMenu.create_text(width/2 , 30 , fill="black" , font=("Times 20 italic bold", 50) , text="Menu")
 
 	#Necessary buttons places on the menu screen
@@ -101,6 +103,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 	colour= ["Red", "Red", "Green", "Orange", "Pink", "Purple"]
 	global enemyColour
 	enemyColour= []
+
 	while True:
 
 		delayFish()
@@ -111,7 +114,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 
 	mainWindow.mainloop()
 
-global fishx
+# global fishx
 fishx=1700
 def createEnemy():
 	global fishx
@@ -121,6 +124,7 @@ def createEnemy():
 	y= random.randint(0,900)
 	# creation of fish pic
 	fishPic= colour[f_col] + ".png"
+	
 	enemyPicture= PhotoImage(file= fishPic)
 	enemyFish.append(enemyPicture)
 	enemyPic.append(fishPic)
@@ -128,48 +132,50 @@ def createEnemy():
 	fishx=fishx+20
 	enemy=(canvasGame.create_image(fishx, y, image= enemyPicture))
 	enemyList.append(enemy)
-	
+	enemyColour.append(f_col)	
+
 	# update game canvas 
-	# print(enemyList)
 	canvasGame.update()
-		
 
 def delayFish():
-	
 	while True:
 		createEnemy()
 		moveFish()
-		# test()
-		# moveFish()
-		# cause delay
-		# mainWindow.after(1, delayFish)
 
 def moveFish():
+	global score
+
 	for enemy in enemyList:
 
+		# find position of enemy item
 		pos= canvasGame.coords(enemy)
 		if pos[0]>-100:
 			canvasGame.move(enemy, -10, 0)
 
 		else:
+			# remove when fish is off screen
 			enemyList.remove(enemy)
 			canvasGame.delete(enemy)		
 
+		# find pos of user on canvas
 		fpos= canvasGame.coords(fish)
+		# comparison for x position on canvas 
 		if (pos[0]-47.5 <= fpos[0]+95) and (pos[0]+ 47.5 >= fpos[0]-95):
 
+			# comparison for y position on canvas
 			if(pos[1]-32.5 >= fpos[1]-65 and pos[1]+32.5<= fpos[1]+65):
+				# Remove from canvas if collision
 				enemyList.remove(enemy)
 				canvasGame.delete(enemy)
-				print ("works")
+				if enemyColour[enemy] == "0" or enemyColour[enemy] == "1" :
+					# print(enemyColour[enemy])
+					score+=1
+					print(score)
 
-		# if(pos[0]-47.5 <= fpos[0] +95):
-		# 	print("pass")
-		
+				else:
+					print("dead")
+					print(enemyColour[enemy])
 
-# or (pos[1]+32.5 <= fpos[1]+32.5)
-# def test():
-# 	canvasGame.after(4000, createEnemy())
 
 createMenu()
 
