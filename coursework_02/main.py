@@ -16,7 +16,6 @@ y= (hs/2) - (hs/2)
 mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
 mainWindow.resizable(0,0)
 
-
 # Creation of canvases
 canvasMenu= Canvas(mainWindow, width=1600, height=900)
 canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
@@ -194,9 +193,8 @@ def moveFish():
 					print("score is:" + str(score))
 
 				else:
-					print(enemyColour[enemy-4])
 					paused= True
-
+					endGame()
 
 
 def pauseGame():
@@ -208,7 +206,32 @@ def pauseGame():
 	pauseWindow.title("Game Paused")
 	pauseWindow.geometry('%dx%d+%d+%d' %(400, 800, 700, 75))
 	pauseWindow.resizable(0,0)
+	canvasPause= Canvas(pauseWindow, width=400, height=800)
 
+	#Necessary buttons places on the menu screen
+	btnPlay= Button(canvasPause, text= "Play", bg="black", height=3, width=30, command=playGame)
+	btnPlay.place(x=60, y=500)
+	canvasPause.pack()
+
+	pauseWindow.mainloop()
+
+def playGame():
+	pauseWindow.destroy()
+	startGame()
+
+def endGame():
+
+	global endWindow
+	endWindow= Tk()
+	endWindow.title("Game Paused")
+	endWindow.geometry('%dx%d+%d+%d' %(400, 800, 700, 75))
+	endWindow.resizable(0,0)
+	canvasEnd= Canvas(endWindow, width=400, height=800)
+
+	#Necessary buttons places on the menu screen
+	btnPlay= Button(canvasEnd, text= "Play", bg="black", height=3, width=30, command=playGame)
+	btnPlay.place(x=60, y=500)
+	canvasEnd.pack()
 
 createMenu()
 
