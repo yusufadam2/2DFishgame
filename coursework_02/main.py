@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import random
 import time
 
@@ -23,6 +24,22 @@ canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
 # necessary Global variables 
 global score
 score= 0
+
+global leaderboard
+leaderboard= []
+
+global leaderboardFile
+leaderboardFile= "Leaderboard.txt"
+
+scores= []
+with open(leaderboardFile) as file:
+	scores= file.read()
+	scores= scores.split("\n")
+
+for i in scores:
+	leaderboard.append(i)
+
+print(leaderboard)
 
 def leftKey(event): #Function used to move the fish character left
 	direction= "left"
@@ -216,22 +233,43 @@ def pauseGame():
 	pauseWindow.mainloop()
 
 def playGame():
+	# destroys pause window on button press
 	pauseWindow.destroy()
 	startGame()
 
 def endGame():
-
+	# Creation of window when game ends
 	global endWindow
 	endWindow= Tk()
 	endWindow.title("Game Paused")
+	# Dimentions of window
 	endWindow.geometry('%dx%d+%d+%d' %(400, 800, 700, 75))
 	endWindow.resizable(0,0)
-	canvasEnd= Canvas(endWindow, width=400, height=800)
-
+	canvasEnd= Canvas(endWindow, width=400, height=800, bg="black")
+	# User input for name stored on leaderboard
+	global entryName
+	entryName= Entry(endWindow, width= 30)
+	entryName.place(x=60, y=400)
 	#Necessary buttons places on the menu screen
-	btnPlay= Button(canvasEnd, text= "Play", bg="black", height=3, width=30, command=playGame)
+	btnPlay= Button(canvasEnd, text= "Save to Leaderboard", bg="black", height=3, width=30, command=writeToLeaderboard)
 	btnPlay.place(x=60, y=500)
 	canvasEnd.pack()
+
+def writeToLeaderboard():
+	strName= str(entryName.get())
+
+	# Validation on name
+	if len(strName)<3 or len(strName)>20:
+		messagebox.showinfo("Error", "Name must be between 3 and 20 characters long")
+
+	else:
+		# adds score and name to both file and list
+		savedScore= entryName.get() + " " + str(score)
+		leaderboard.append(savedScore)
+		leaderboardFile= open("Leaderboard.txt", "a")
+		leaderboardFile.write(savedScore + "\n")
+		leaderboardFile.close()
+		print(leaderboard)
 
 createMenu()
 
