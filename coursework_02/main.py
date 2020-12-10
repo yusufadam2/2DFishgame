@@ -17,13 +17,11 @@ y= (hs/2) - (hs/2)
 mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
 mainWindow.resizable(0,0)
 
-# Creation of canvases
-canvasMenu= Canvas(mainWindow, width=1600, height=900)
-canvasGame= Canvas(mainWindow, width=1600, height=900, bd=0)
-
 # necessary Global variables 
-global score
 score= 0
+
+global paused
+paused= False
 
 global leaderboard
 leaderboard= []
@@ -32,14 +30,17 @@ global leaderboardFile
 leaderboardFile= "Leaderboard.txt"
 
 scores= []
-with open(leaderboardFile) as file:
-	scores= file.read()
-	scores= scores.split("\n")
+try:
+	with open(leaderboardFile) as file:
+		scores= file.read()
+		scores= scores.split("\n")
+
+except:
+	pass
 
 for i in scores:
 	leaderboard.append(i)
 
-print(leaderboard)
 
 def leftKey(event): #Function used to move the fish character left
 	direction= "left"
@@ -67,8 +68,9 @@ def downKey(event): #Function used to move the fish character down
 
 
 def createMenu(): #sets the attributes for the menu canvas
-	
-	canvasMenu.config(bg="#9CEFFE")
+	global canvasMenu
+	canvasMenu= Canvas(mainWindow, width=1600, height=900)
+	canvasMenu.config(bg="black")
 	canvasMenu.pack(expand= YES, fill= BOTH)
 	imgbackground= PhotoImage(file= "background.png")
 	canvasMenu.create_image(800,450, image= imgbackground)
@@ -93,8 +95,11 @@ def createMenu(): #sets the attributes for the menu canvas
 	mainWindow.mainloop()
 
 def createGame(): #Function used to add the attributes for the game canvas
+	global canvasGame
+	canvasGame= Canvas(mainWindow, width=1600, height=900, bg='black')
 	canvasGame.config()
 	canvasGame.pack(expand= YES, fill= BOTH)
+	canvasGame.update()
 	#Create background image
 	gamebg= PhotoImage(file= "game.png")
 	canvasGame.create_image(800,450, image= gamebg)
@@ -106,6 +111,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 	sidat= PhotoImage(file= "fish.png")
 	global fish
 	fish= canvasGame.create_image(90,450, image= sidat)
+	canvasGame.update()
 	canvasGame.config(bg="#9CEFFE")
 
 	btn_pause= PhotoImage(file= "pause.png")
@@ -118,6 +124,7 @@ def createGame(): #Function used to add the attributes for the game canvas
 	canvasGame.bind("<Up>", upKey)
 	canvasGame.bind("<Down>", downKey)
 	canvasGame.focus_set()
+	canvasGame.pack()
 
 	# Creation of necessary variables used throughout the program
 	global enemyList
@@ -131,8 +138,8 @@ def createGame(): #Function used to add the attributes for the game canvas
 	enemyColour= []
 
 	while True:
-
 		startGame()
+
 		break
 
 
@@ -153,7 +160,8 @@ def createEnemy():
 	enemyFish.append(enemyPicture)
 	enemyPic.append(fishPic)
 	# place fish on canvas
-	fishx=fishx+100
+	fishx= fishx+100
+
 	enemy=(canvasGame.create_image(fishx, y, image= enemyPicture))
 	enemyList.append(enemy)
 	enemyColour.append(f_col)	
@@ -162,8 +170,6 @@ def createEnemy():
 	canvasGame.update()
 
 def startGame():
-	global paused
-	paused= False
 	while True:
 		createEnemy()
 		moveFish()
@@ -177,16 +183,26 @@ def startGame():
 			print("pause works")
 			break
 
+	mainWindow.mainloop()
+
 def moveFish():
 	global score
-	global paused 
-
 	for enemy in enemyList:
 
 		# find position of enemy item
 		pos= canvasGame.coords(enemy)
 		if pos[0]>-100:
-			canvasGame.move(enemy, -10, 0)
+			if score<=5:
+				canvasGame.move(enemy, -5, 0)
+
+			elif score>5 and score<=10:
+				canvasGame.move(enemy, -10, 0)
+
+			elif score>10 and score<=20:
+				canvasGame.move(enemy, -15, 0)
+
+			else:
+				canvasGame.move(enemy, -20, 0)
 
 		else:
 			# remove when fish is off screen
@@ -205,17 +221,15 @@ def moveFish():
 				canvasGame.delete(enemy)
 				if enemyColour[enemy-4] == 0 or enemyColour[enemy-4] == 1 :
 					# print(enemyColour[enemy])
-					score+=1
+					score= score+1
 					canvasGame.itemconfig(scoreText, text="Score: " + str(score))
 					print("score is:" + str(score))
 
 				else:
-					paused= True
 					endGame()
 
-
 def pauseGame():
-	global paused
+	
 	paused= True
 	# creation of pause window
 	global pauseWindow
@@ -230,7 +244,6 @@ def pauseGame():
 	btnPlay.place(x=60, y=500)
 	canvasPause.pack()
 
-	pauseWindow.mainloop()
 
 def playGame():
 	# destroys pause window on button press
@@ -239,6 +252,7 @@ def playGame():
 
 def endGame():
 	# Creation of window when game ends
+	paused= True
 	global endWindow
 	endWindow= Tk()
 	endWindow.title("Game Paused")
@@ -254,6 +268,7 @@ def endGame():
 	btnPlay= Button(canvasEnd, text= "Save to Leaderboard", bg="black", height=3, width=30, command=writeToLeaderboard)
 	btnPlay.place(x=60, y=500)
 	canvasEnd.pack()
+	mainWindow.mainloop()
 
 def writeToLeaderboard():
 	strName= str(entryName.get())
@@ -269,7 +284,31 @@ def writeToLeaderboard():
 		leaderboardFile= open("Leaderboard.txt", "a")
 		leaderboardFile.write(savedScore + "\n")
 		leaderboardFile.close()
-		print(leaderboard)
+		endWindow.destroy()
+		canvasGame.destroy()
+		restartGame()
+		createMenu()
+		
+		
+
+def restartGame():
+	global score
+	global fishx
+
+	paused= False
+	print(paused)
+	score= 0
+	enemyList.clear()
+	print (enemyList)
+
+	enemyPic.clear()
+	print(enemyPic)
+	enemyColour.clear()
+	print(enemyColour)
+
+	enemyFish.clear()
+	print(enemyFish)
+	fishx=1700
 
 createMenu()
 
