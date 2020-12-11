@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import time
+import sys
+import os
 
 width= 1600
 height= 900
@@ -26,19 +28,23 @@ paused= False
 global leaderboard
 leaderboard= []
 
+global splitLdrb
+splitLdrb= []
+
 global leaderboardFile
 leaderboardFile= "Leaderboard.txt"
 
-scores= []
 try:
 	with open(leaderboardFile) as file:
 		scores= file.read()
-		scores= scores.split("\n")
+		scores= scores.split('\n')
+
 
 except:
 	pass
 
 for i in scores:
+	splitLdrb.append(i.strip().split(","))
 	leaderboard.append(i)
 
 
@@ -86,11 +92,59 @@ def createMenu(): #sets the attributes for the menu canvas
 	btnInst= Button(canvasMenu, text= "Instructions", bg="white", height=3, width=70)
 	btnInst.place(relx=0.5, rely=0.559, anchor=CENTER)
 
-	btnLdrb= Button(canvasMenu, text= "Leaderboard", bg="white", height=3, width=70)
+	btnLdrb= Button(canvasMenu, text= "Leaderboard", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), createLdrb()])
 	btnLdrb.place(relx=0.5, rely=0.617, anchor=CENTER)
 
 	btnSet= Button(canvasMenu, text= "Settings", bg="white", height=3, width=70)
 	btnSet.place(relx=0.5, rely=0.674, anchor=CENTER)
+
+	mainWindow.mainloop()
+
+def createLdrb():
+	global canvasLdrb
+	canvasLdrb= Canvas(mainWindow, width=1600, height=900)
+	canvasLdrb.config(bg="black")
+	canvasLdrb.pack(expand= YES, fill= BOTH)
+	imgbackground= PhotoImage(file= "background.png")
+	canvasLdrb.create_image(800,450, image= imgbackground)
+	canvasLdrb.pack()
+
+	global leaderboard
+	leaderboard= []
+
+	global splitLdrb
+	splitLdrb= []
+
+	global leaderboardFile
+	leaderboardFile= "Leaderboard.txt"
+
+	try:
+		with open(leaderboardFile) as file:
+			for line in file:
+				splitLdrb.append(line.strip("\n").split(","))
+
+		for i in range(len(splitLdrb)):
+			splitLdrb[i][1] = int(splitLdrb[i][1])
+
+	except:
+		pass
+
+	splitLdrb.sort(key=lambda x: x[1], reverse= True)
+
+	print(splitLdrb)
+
+	canvasLdrb.create_rectangle(300, 200, 1300, 700, fill= 'black')
+
+	ldrbTxt= canvasLdrb.create_text(width/2 , 240 , fill="white" , font=("Times 20 italic bold", 50) , text="Leaderboard:")
+	ldrbFirst= canvasLdrb.create_text(width/2 , 320 , fill="white" , font=("Times 20 italic bold", 50) , text="1: " + splitLdrb[0][0] + " " + str(splitLdrb[0][1]))
+	ldrbSecond= canvasLdrb.create_text(width/2 , 400 , fill="white" , font=("Times 20 italic bold", 50) , text="2: " + splitLdrb[1][0] + " " + str(splitLdrb[1][1]))
+	ldrbThird= canvasLdrb.create_text(width/2 , 480 , fill="white" , font=("Times 20 italic bold", 50) , text="3: " + splitLdrb[2][0] + " " + str(splitLdrb[2][1]))
+	ldrbFourth= canvasLdrb.create_text(width/2 , 560 , fill="white" , font=("Times 20 italic bold", 50) , text="4: " + splitLdrb[3][0] + " " + str(splitLdrb[3][1]))
+	ldrbFifth= canvasLdrb.create_text(width/2 , 640 , fill="white" , font=("Times 20 italic bold", 50) , text="5: " + splitLdrb[4][0] + " " + str(splitLdrb[4][1]))
+
+	btnSet= Button(canvasLdrb, text= "Return", bg="black", height=3, width=20, command= lambda:[canvasLdrb.destroy(), createMenu()])
+	canvasLdrb.pack()
+	btnSet.place(x=10, y=800)
 
 	mainWindow.mainloop()
 
@@ -170,6 +224,16 @@ def createEnemy():
 	canvasGame.update()
 
 def startGame():
+	global paused
+	paused = False
+
+	canvasGame.bind("<Left>", leftKey)
+	canvasGame.bind("<Right>", rightKey)
+	canvasGame.bind("<Up>", upKey)
+	canvasGame.bind("<Down>", downKey)
+	canvasGame.focus_set()
+	canvasGame.pack()
+
 	while True:
 		createEnemy()
 		moveFish()
@@ -201,8 +265,14 @@ def moveFish():
 			elif score>10 and score<=20:
 				canvasGame.move(enemy, -15, 0)
 
-			else:
+			elif score>20 and score<=30:
 				canvasGame.move(enemy, -20, 0)
+
+			elif score>30 and score<=40:
+				canvasGame.move(enemy, -30, 0)
+
+			else:
+				canvasGame.move(enemy, -50, 0)
 
 		else:
 			# remove when fish is off screen
@@ -229,7 +299,7 @@ def moveFish():
 					endGame()
 
 def pauseGame():
-	
+	global paused
 	paused= True
 	# creation of pause window
 	global pauseWindow
@@ -251,6 +321,7 @@ def playGame():
 	startGame()
 
 def endGame():
+	global paused 
 	# Creation of window when game ends
 	paused= True
 	global endWindow
@@ -279,7 +350,7 @@ def writeToLeaderboard():
 
 	else:
 		# adds score and name to both file and list
-		savedScore= entryName.get() + " " + str(score)
+		savedScore= entryName.get() + "," + str(score)
 		leaderboard.append(savedScore)
 		leaderboardFile= open("Leaderboard.txt", "a")
 		leaderboardFile.write(savedScore + "\n")
@@ -290,11 +361,12 @@ def writeToLeaderboard():
 		createMenu()
 		
 		
-
+# function to restart game
 def restartGame():
 	global score
 	global fishx
-
+	global paused
+	# rests all variables and empties lists used
 	paused= False
 	print(paused)
 	score= 0
@@ -310,6 +382,7 @@ def restartGame():
 	print(enemyFish)
 	fishx=1700
 
+# start game
 createMenu()
 
 
