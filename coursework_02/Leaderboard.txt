@@ -1,0 +1,9 @@
+Yusuf,25
+Adam,10
+yusuf,6
+tes,1
+sohail,21
+kuffar,16
+abcde,38
+wadi,40
+abcde,70

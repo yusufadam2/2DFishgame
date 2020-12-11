@@ -19,8 +19,17 @@ y= (hs/2) - (hs/2)
 mainWindow.geometry('%dx%d+%d+%d' % (width, height, x, y)) #window size
 mainWindow.resizable(0,0)
 
-# necessary Global variables 
+# necessary Global variables required to read from file
+global canvasGame
+canvasGame= Canvas(mainWindow, width=1600, height=900, bg='black')
+canvasGame.config()
+
 score= 0
+
+global keyChange
+keyChange= True
+
+global saveFile
 
 global paused
 paused= False
@@ -72,35 +81,65 @@ def downKey(event): #Function used to move the fish character down
 	if fishPos[1]<850:
 		canvasGame.move(fish, 0, 25)
 
+def leftKey1(event): #Function used to move the fish character left
+	direction= "left"
+	fishPos= canvasGame.coords(fish)
+	if fishPos[0]>100:
+		canvasGame.move(fish, -25, 0)
+
+def rightKey1(event): #Function used to move the fish character right
+	direction= "right"
+	fishPos= canvasGame.coords(fish)
+	if fishPos[0]<1500:
+		canvasGame.move(fish, 25, 0)
+
+def upKey1(event): #Function used to move the fish character up
+	direction= "up"
+	fishPos= canvasGame.coords(fish)
+	if fishPos[1]>50:
+		canvasGame.move(fish, 0, -25)
+
+def downKey1(event): #Function used to move the fish character down
+	direction= "down"
+	fishPos= canvasGame.coords(fish)
+	if fishPos[1]<850:
+		canvasGame.move(fish, 0, 25)
+
+def popupBox():
+	loadgame= messagebox.askquestion(title="load game", message="Would you like to load the previously saved game?")
+	if loadgame == "no":
+		createGame()
+
+	else:
+		loadGame()
 
 def createMenu(): #sets the attributes for the menu canvas
 	global canvasMenu
 	canvasMenu= Canvas(mainWindow, width=1600, height=900)
 	canvasMenu.config(bg="black")
 	canvasMenu.pack(expand= YES, fill= BOTH)
-	imgbackground= PhotoImage(file= "background.png")
-	canvasMenu.create_image(800,450, image= imgbackground)
 	canvasMenu.pack()
 
 	#text used to set the name
 	titleText= canvasMenu.create_text(width/2 , 30 , fill="black" , font=("Times 20 italic bold", 50) , text="Menu")
 
 	#Necessary buttons places on the menu screen
-	btnStart= Button(canvasMenu, text= "Start", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), createGame()])
+	btnStart= Button(canvasMenu, text= "Start", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), popupBox()])
 	btnStart.place(relx=0.5, rely=0.501, anchor=CENTER)
 
-	btnInst= Button(canvasMenu, text= "Instructions", bg="white", height=3, width=70)
+	btnInst= Button(canvasMenu, text= "Instructions", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), createInstr()])
 	btnInst.place(relx=0.5, rely=0.559, anchor=CENTER)
 
 	btnLdrb= Button(canvasMenu, text= "Leaderboard", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), createLdrb()])
 	btnLdrb.place(relx=0.5, rely=0.617, anchor=CENTER)
 
-	btnSet= Button(canvasMenu, text= "Settings", bg="white", height=3, width=70)
+	btnSet= Button(canvasMenu, text= "Settings", bg="white", height=3, width=70, command= lambda:[canvasMenu.destroy(), createSettings()])
 	btnSet.place(relx=0.5, rely=0.674, anchor=CENTER)
 
 	mainWindow.mainloop()
 
 def createLdrb():
+	# creation of leaderboard canvas
 	global canvasLdrb
 	canvasLdrb= Canvas(mainWindow, width=1600, height=900)
 	canvasLdrb.config(bg="black")
@@ -109,6 +148,7 @@ def createLdrb():
 	canvasLdrb.create_image(800,450, image= imgbackground)
 	canvasLdrb.pack()
 
+	# necessary global variables needed for leaderboard
 	global leaderboard
 	leaderboard= []
 
@@ -118,23 +158,28 @@ def createLdrb():
 	global leaderboardFile
 	leaderboardFile= "Leaderboard.txt"
 
+	# reads from leaderboard file
 	try:
 		with open(leaderboardFile) as file:
 			for line in file:
+				# split each item from file
 				splitLdrb.append(line.strip("\n").split(","))
 
+		# convert the number items to integers
 		for i in range(len(splitLdrb)):
 			splitLdrb[i][1] = int(splitLdrb[i][1])
 
 	except:
 		pass
 
+	# sort the leaderboard
 	splitLdrb.sort(key=lambda x: x[1], reverse= True)
 
 	print(splitLdrb)
 
 	canvasLdrb.create_rectangle(300, 200, 1300, 700, fill= 'black')
 
+	# creation of text for leaderboard
 	ldrbTxt= canvasLdrb.create_text(width/2 , 240 , fill="white" , font=("Times 20 italic bold", 50) , text="Leaderboard:")
 	ldrbFirst= canvasLdrb.create_text(width/2 , 320 , fill="white" , font=("Times 20 italic bold", 50) , text="1: " + splitLdrb[0][0] + " " + str(splitLdrb[0][1]))
 	ldrbSecond= canvasLdrb.create_text(width/2 , 400 , fill="white" , font=("Times 20 italic bold", 50) , text="2: " + splitLdrb[1][0] + " " + str(splitLdrb[1][1]))
@@ -142,11 +187,64 @@ def createLdrb():
 	ldrbFourth= canvasLdrb.create_text(width/2 , 560 , fill="white" , font=("Times 20 italic bold", 50) , text="4: " + splitLdrb[3][0] + " " + str(splitLdrb[3][1]))
 	ldrbFifth= canvasLdrb.create_text(width/2 , 640 , fill="white" , font=("Times 20 italic bold", 50) , text="5: " + splitLdrb[4][0] + " " + str(splitLdrb[4][1]))
 
+	# Button to return to main menu
 	btnSet= Button(canvasLdrb, text= "Return", bg="black", height=3, width=20, command= lambda:[canvasLdrb.destroy(), createMenu()])
 	canvasLdrb.pack()
 	btnSet.place(x=10, y=800)
 
 	mainWindow.mainloop()
+
+def controlFalse():
+	global keyChange
+	keyChange= False
+
+def controlTrue():
+	global keyChange
+	keyChange= True
+	print("controls changed")
+
+
+def createSettings():
+	# creation of leaderboard canvas
+	global canvasSettings
+	canvasSettings= Canvas(mainWindow, width=1600, height=900)
+	canvasSettings.config(bg="black")
+	canvasSettings.pack(expand= YES, fill= BOTH)
+	canvasSettings.pack()
+
+	# Button to return to main menu
+	btnWASD= Button(canvasSettings, text= "Use 'WASD' controls", bg="black", height=3, width=20, command= lambda:[controlTrue()])
+	canvasSettings.pack()
+	btnWASD.place(x=500, y=300)
+
+	# Button to return to main menu
+	btnArrows= Button(canvasSettings, text= "Use Arrow controls", bg="black", height=3, width=20, command= lambda:[controlFalse()])
+	canvasSettings.pack()
+	btnArrows.place(x=500, y=500)
+
+	# Button to return to main menu
+	btnSet= Button(canvasSettings, text= "Return", bg="black", height=3, width=20, command= lambda:[canvasSettings.destroy(), createMenu()])
+	canvasSettings.pack()
+	btnSet.place(x=10, y=800)
+
+	mainWindow.mainloop()
+
+def createInstr():
+	# creation of leaderboard canvas
+	global canvasInstr
+	canvasInstr= Canvas(mainWindow, width=1600, height=900)
+	canvasInstr.config(bg="black")
+	canvasInstr.pack(expand= YES, fill= BOTH)
+	canvasInstr.pack()
+
+	istrText= canvasInstr.create_text(width/2 , 240 , fill="white" , font=("Times 20 italic bold", 50) , text="How to play: \n You can only eat the red fish. If you touch another colour, you die! \n Enjoy! \n (default controls: WASD")
+	# Button to return to main menu
+	btnSet= Button(canvasInstr, text= "Return", bg="black", height=3, width=20, command= lambda:[canvasInstr.destroy(), createMenu()])
+	canvasInstr.pack()
+	btnSet.place(x=10, y=800)
+
+	mainWindow.mainloop()
+
 
 def createGame(): #Function used to add the attributes for the game canvas
 	global canvasGame
@@ -173,10 +271,19 @@ def createGame(): #Function used to add the attributes for the game canvas
 	pausebtn.place(x=10, y=10)
 
 	#binds the control keys to the necessary functions for movement
-	canvasGame.bind("<Left>", leftKey)
-	canvasGame.bind("<Right>", rightKey)
-	canvasGame.bind("<Up>", upKey)
-	canvasGame.bind("<Down>", downKey)
+	if keyChange == False:
+		canvasGame.bind("<Left>", leftKey)
+		canvasGame.bind("<Right>", rightKey)
+		canvasGame.bind("<Up>", upKey)
+		canvasGame.bind("<Down>", downKey)
+	else:
+		canvasGame.bind("<a>", leftKey1)
+		canvasGame.bind("<d>", rightKey1)
+		canvasGame.bind("<w>", upKey1)
+		canvasGame.bind("<s>", downKey1)
+	canvasGame.focus_set()
+	canvasGame.pack()
+
 	canvasGame.focus_set()
 	canvasGame.pack()
 
@@ -209,12 +316,13 @@ def createEnemy():
 	y= random.randint(50,850)
 	# creation of fish pic
 	fishPic= colour[f_col] + ".png"
-	
+
+	global enemyPicture
 	enemyPicture= PhotoImage(file= fishPic)
 	enemyFish.append(enemyPicture)
 	enemyPic.append(fishPic)
 	# place fish on canvas
-	fishx= fishx+100
+	fishx= fishx+90
 
 	enemy=(canvasGame.create_image(fishx, y, image= enemyPicture))
 	enemyList.append(enemy)
@@ -227,10 +335,17 @@ def startGame():
 	global paused
 	paused = False
 
-	canvasGame.bind("<Left>", leftKey)
-	canvasGame.bind("<Right>", rightKey)
-	canvasGame.bind("<Up>", upKey)
-	canvasGame.bind("<Down>", downKey)
+	# Rebind keys at when game starts
+	if keyChange == False:
+		canvasGame.bind("<Left>", leftKey)
+		canvasGame.bind("<Right>", rightKey)
+		canvasGame.bind("<Up>", upKey)
+		canvasGame.bind("<Down>", downKey)
+	else:
+		canvasGame.bind("<A>", leftKey1)
+		canvasGame.bind("<D>", rightKey1)
+		canvasGame.bind("<W>", upKey1)
+		canvasGame.bind("<S>", downKey1)
 	canvasGame.focus_set()
 	canvasGame.pack()
 
@@ -244,7 +359,6 @@ def startGame():
 			canvasGame.unbind("<Up>")
 			canvasGame.unbind("<Down>")
 			canvasGame.focus_set()
-			print("pause works")
 			break
 
 	mainWindow.mainloop()
@@ -296,6 +410,7 @@ def moveFish():
 					print("score is:" + str(score))
 
 				else:
+					print(enemyColour[enemy-4])
 					endGame()
 
 def pauseGame():
@@ -307,13 +422,19 @@ def pauseGame():
 	pauseWindow.title("Game Paused")
 	pauseWindow.geometry('%dx%d+%d+%d' %(400, 800, 700, 75))
 	pauseWindow.resizable(0,0)
-	canvasPause= Canvas(pauseWindow, width=400, height=800)
+	canvasPause= Canvas(pauseWindow, width=400, height=800, bg='black')
 
 	#Necessary buttons places on the menu screen
-	btnPlay= Button(canvasPause, text= "Play", bg="black", height=3, width=30, command=playGame)
+	btnPlay= Button(canvasPause, text= "Play", bg="white", height=3, width=30, command=playGame)
 	btnPlay.place(x=60, y=500)
+
+	btnSave= Button(canvasPause, text= "Save", bg="white", height=3, width=30, command=saveGame)
+	btnSave.place(x=60, y=600)
 	canvasPause.pack()
 
+	btnHome= Button(canvasPause, text= "Return to Menu", bg="white", height=3, width=30, command= lambda:[canvasGame.destroy(), pauseWindow.destroy(), createMenu()])
+	btnHome.place(x=60, y=700)
+	canvasPause.pack()
 
 def playGame():
 	# destroys pause window on button press
@@ -382,7 +503,139 @@ def restartGame():
 	print(enemyFish)
 	fishx=1700
 
+
+def saveGame():
+	saveFile= "Load.txt"
+
+	# rests all variables and empties lists used
+	cEnemyList= ""
+	cEnemyColour= ""
+	cPos=""
+	fishPos= canvasGame.coords(fish)
+	cFishPos= str(fishPos[0]) + "*" + str(fishPos[1])
+
+	for i in enemyList:
+		cEnemyList= cEnemyList + str(i) + " "
+	
+	print(cEnemyList)
+
+	print("\n")
+	
+	for i in enemyColour:
+		cEnemyColour= cEnemyColour + str(i) + " "
+	print(cEnemyColour)
+	
+	for enemy in enemyList:
+		pos= canvasGame.coords(enemy)
+		cPos= cPos + str(pos[0]) + "*" + str(pos[1]) + " "
+
+	print(fishx)
+
+	with open(saveFile, 'w') as filetowrite:
+		filetowrite.write(str(score) + "\n" + cEnemyList + "\n" + cEnemyColour + "\n" + cPos + "\n" + cFishPos + str(fishx))
+
+def loadGame():
+	global score
+	global canvasGame
+	canvasGame= Canvas(mainWindow, width=1600, height=900, bg='black')
+	canvasGame.config()
+	canvasGame.pack(expand= YES, fill= BOTH)
+	canvasGame.update()
+	#Create background image
+	gamebg= PhotoImage(file= "game.png")
+	canvasGame.create_image(800,450, image= gamebg)
+
+	global scoreText
+	scoreText= canvasGame.create_text(1500, 20, fill="black", font=("Comic Sans", 50), text="Score: " + str(score))
+
+	#create fish character image 
+	sidat= PhotoImage(file= "fish.png")
+	global fish
+	# fish= canvasGame.create_image(90,450, image= sidat)
+	# canvasGame.update()
+	# canvasGame.config(bg="#9CEFFE")
+
+	btn_pause= PhotoImage(file= "pause.png")
+	pausebtn= Button(canvasGame, image= btn_pause, borderwidth=0, highlightthickness=0, command= pauseGame)
+	pausebtn.place(x=10, y=10)
+
+	#binds the control keys to the necessary functions for movement
+	canvasGame.bind("<Left>", leftKey)
+	canvasGame.bind("<Right>", rightKey)
+	canvasGame.bind("<Up>", upKey)
+	canvasGame.bind("<Down>", downKey)
+	canvasGame.focus_set()
+	canvasGame.pack()
+
+
+	
+	global fishPos
+	global enemyList
+	enemyList= []
+	global enemyPic, enemyFish
+	enemyPic= []
+	enemyFish = []
+	global colour
+	colour= ["Red", "Red", "Green", "Orange", "Pink", "Purple"]
+	global enemyColour
+	enemyColour= []
+	# global
+	global enemyPicture
+
+	tempCoords= []
+	fishCoords= []
+
+	loadItems= []
+	saveFile= "Load.txt"
+	# reads from leaderboard file
+	try:
+		with open(saveFile) as file:
+			for line in file:
+				# split each item from file
+				loadItems.append(line.strip("\n"))
+
+	except:
+		pass
+		print("error")
+
+	# try:
+	score= int(loadItems[0])
+	# enemyList= loadItems[1].split(" ")
+	enemyColour= loadItems[2].split(" ")
+	
+	tempCoords= loadItems[3].split(" ")
+	fishxy= loadItems[4].split("*")
+	fishxpos= fishxy[0]
+	fishypos= fishxy[1]
+	fish= canvasGame.create_image(10,400, image= sidat)
+	for i in range (len(tempCoords)):
+		fishCoords= tempCoords[i].split("*")
+
+		fishColour= int(enemyColour[i])
+		fishPic= colour[fishColour] + ".png"
+		enemyPicture= PhotoImage(file= fishPic)
+		enemyFish.append(enemyPicture)
+		enemyPic.append(fishPic)
+		x=fishCoords[0]
+		y=fishCoords[1]
+		enemy= canvasGame.create_image(x, y, image= enemyPicture)
+		enemyList.append(enemy)
+		canvasGame.pack()
+		canvasGame.update()
+
+		while True:
+			startGame()
+
+			break
+
+		mainWindow.mainloop()
+		# except:
+	# 	pass
+	# 	print("error here")
+
 # start game
+
+
 createMenu()
 
 
